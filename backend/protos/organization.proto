@@ -1,0 +1,61 @@
+syntax = 'proto3';
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/ii-varsha-ii/cloud-nsp-cross-customers/backend/protos";
+
+service OrganizationService {
+  rpc GetOrganization(google.protobuf.Empty) returns (Organization) {}
+  rpc GetAccountsInOrganization(google.protobuf.Empty) returns (ListOfAccounts) {}
+  rpc GetAccountInOrganizationBasedOnId(AccountId) returns (Account) {}
+  rpc CreateAccountInOrganization(CreateAccountRequest) returns (CreateAccountResponse) {}
+  rpc InviteAccountToOrganization(InviteAccountRequest) returns (Account) {}
+}
+
+message Organization {
+  string id = 1;
+  string arn = 2;
+  string master_account_arn = 3;
+  string master_account_id = 4;
+  string master_account_email = 5;
+}
+
+message Account {
+  string id = 1;
+  string arn = 2;
+  string email = 3;
+  string name = 4;
+  string status = 5;
+  string joined_method = 6;
+  string joined_timestamp = 7;
+}
+
+message ListOfAccounts {
+  repeated Account accounts = 1;
+}
+
+message AccountId {
+  string account_id = 1;
+}
+
+message CreateAccountRequest {
+  string email = 1;
+  string account_name = 2;
+  optional string role_name = 3;
+  string iam_user_access_to_billing = 4;
+}
+
+message CreateAccountResponse {
+  string id = 1;
+  string account_name = 2;
+  string account_id = 3;
+  string state = 4;
+  google.protobuf.Timestamp requested_timestamp = 5;
+  google.protobuf.Timestamp completed_timestamp = 6;
+  string failure_reason = 7;
+}
+
+message InviteAccountRequest {
+  optional string account_id = 1;
+  optional string email_id = 2;
+}
