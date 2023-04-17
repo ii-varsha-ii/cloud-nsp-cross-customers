@@ -1,4 +1,4 @@
-package main
+package gateway
 
 import (
 	"context"
@@ -12,25 +12,17 @@ import (
 )
 
 var (
-	ctx                        = context.Background()
-	httpServerHost             = "localhost"
-	httpServerPort             = 8000
-	gRPCOrganizationClientHost = "localhost"
-	gRPCOrganizationClientPort = 50051
-	httpRouter                 *mux.Router
+	ctx                   = context.Background()
+	httpServerHost        = "localhost"
+	httpServerPort        = 8000
+	gRPCGatewayClientHost = "localhost"
+	gRPCGatewayClientPort = 50053
+	httpRouter            *mux.Router
 )
 
 var (
-	grpcOrganizationClient pb.OrganizationServiceClient
+	grpcGatewayClient pb.GatewayServiceClient
 )
-
-// User selections
-//var (
-//	vpc_id,
-//	subnet_id,
-//	vpc_id2,
-//	subnet_id2
-//)
 
 func initializeHTTPRouter() error {
 	initializeMuxRoutes()
@@ -40,20 +32,20 @@ func initializeHTTPRouter() error {
 	return nil
 }
 
-func initializeGrpcOrganizationClient() error {
+func initializeGrpcGatewayClient() error {
 	var conn *grpc.ClientConn
-	conn, err := grpc.Dial(fmt.Sprintf("%s:%d", gRPCOrganizationClientHost, gRPCOrganizationClientPort), grpc.WithInsecure())
+	conn, err := grpc.Dial(fmt.Sprintf("%s:%d", gRPCGatewayClientHost, gRPCGatewayClientPort), grpc.WithInsecure())
 
 	if err != nil {
-		return fmt.Errorf("organization grpc client initailization failed: %v", err)
+		return fmt.Errorf("gateway grpc client initailization failed: %v", err)
 	}
 
-	grpcOrganizationClient = pb.NewOrganizationServiceClient(conn)
+	grpcGatewayClient = pb.NewGatewayServiceClient(conn)
 	return nil
 }
 
 func initialize() error {
-	if err := initializeGrpcOrganizationClient(); err != nil {
+	if err := initializeGrpcGatewayClient(); err != nil {
 		return fmt.Errorf("gRPC client initialization error. %v", err)
 	}
 
@@ -63,7 +55,7 @@ func initialize() error {
 	return nil
 }
 
-func main() {
+func RunGatewayServer() {
 	if err := initialize(); err != nil {
 		log.Panic(err)
 	}

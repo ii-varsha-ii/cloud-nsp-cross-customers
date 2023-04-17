@@ -1,0 +1,20 @@
+syntax = 'proto3';
+
+option go_package = "github.com/ii-varsha-ii/cloud-nsp-cross-customers/backend/protos";
+
+
+service GatewayService {
+  rpc GetTransitGateway(RegionRequest) returns (TransitGateway);
+}
+
+message TransitGateway {
+  string id = 1;
+  string arn = 2;
+  string state = 3;
+  string description = 4;
+  string owner_id = 5;
+  string creation_time = 6;
+}
+message RegionRequest {
+  string region = 1;
+}

@@ -1,6 +1,5 @@
 syntax = 'proto3';
 import "google/protobuf/empty.proto";
-import "google/protobuf/timestamp.proto";
 
 option go_package = "github.com/ii-varsha-ii/cloud-nsp-cross-customers/backend/protos";
 
@@ -8,8 +7,7 @@ service OrganizationService {
   rpc GetOrganization(google.protobuf.Empty) returns (Organization) {}
   rpc GetAccountsInOrganization(google.protobuf.Empty) returns (ListOfAccounts) {}
   rpc GetAccountInOrganizationBasedOnId(AccountId) returns (Account) {}
-  rpc CreateAccountInOrganization(CreateAccountRequest) returns (CreateAccountResponse) {}
-  rpc InviteAccountToOrganization(InviteAccountRequest) returns (Account) {}
+  rpc InviteAccountToOrganization(InviteAccountRequest) returns (InviteAccountResponse) {}
 }
 
 message Organization {
@@ -50,12 +48,28 @@ message CreateAccountResponse {
   string account_name = 2;
   string account_id = 3;
   string state = 4;
-  google.protobuf.Timestamp requested_timestamp = 5;
-  google.protobuf.Timestamp completed_timestamp = 6;
+  string requested_timestamp = 5;
+  string completed_timestamp = 6;
   string failure_reason = 7;
 }
 
 message InviteAccountRequest {
   optional string account_id = 1;
   optional string email_id = 2;
+}
+
+
+message Pair {
+  string Id = 1;
+  string Type = 2;
+}
+
+message InviteAccountResponse {
+  string id = 1;
+  string arn = 2;
+  repeated Pair parties = 3;
+  string state = 4;
+  string requested_timestamp = 5;
+  string expiration_timestamp = 6;
+  string action = 7;
 }

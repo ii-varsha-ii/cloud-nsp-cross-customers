@@ -43,13 +43,13 @@ message CreateVpcRequest {
   string region = 1;
   string name = 2;
   string ip_cidr = 3;
-  repeated Subnet subnets = 4;
+  repeated CreateSubnetRequest subnets = 4;
 }
 
 message CreateSubnetRequest {
   string region = 1;
   string name = 2;
-  string az = 3;
+  string availability_zone = 3;
   string cidr_block = 4;
   string vpc_id = 5;
   string access = 6;

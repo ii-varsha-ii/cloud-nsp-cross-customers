@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.3.0
 // - protoc             v3.21.11
-// source: backend/protos/organization.proto
+// source: protos/organization.proto
 
 package protos
 
@@ -23,7 +23,6 @@ const (
 	OrganizationService_GetOrganization_FullMethodName                   = "/OrganizationService/GetOrganization"
 	OrganizationService_GetAccountsInOrganization_FullMethodName         = "/OrganizationService/GetAccountsInOrganization"
 	OrganizationService_GetAccountInOrganizationBasedOnId_FullMethodName = "/OrganizationService/GetAccountInOrganizationBasedOnId"
-	OrganizationService_CreateAccountInOrganization_FullMethodName       = "/OrganizationService/CreateAccountInOrganization"
 	OrganizationService_InviteAccountToOrganization_FullMethodName       = "/OrganizationService/InviteAccountToOrganization"
 )
 
@@ -34,8 +33,7 @@ type OrganizationServiceClient interface {
 	GetOrganization(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Organization, error)
 	GetAccountsInOrganization(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*ListOfAccounts, error)
 	GetAccountInOrganizationBasedOnId(ctx context.Context, in *AccountId, opts ...grpc.CallOption) (*Account, error)
-	CreateAccountInOrganization(ctx context.Context, in *CreateAccountRequest, opts ...grpc.CallOption) (*CreateAccountResponse, error)
-	InviteAccountToOrganization(ctx context.Context, in *InviteAccountRequest, opts ...grpc.CallOption) (*Account, error)
+	InviteAccountToOrganization(ctx context.Context, in *InviteAccountRequest, opts ...grpc.CallOption) (*InviteAccountResponse, error)
 }
 
 type organizationServiceClient struct {
@@ -73,17 +71,8 @@ func (c *organizationServiceClient) GetAccountInOrganizationBasedOnId(ctx contex
 	return out, nil
 }
 
-func (c *organizationServiceClient) CreateAccountInOrganization(ctx context.Context, in *CreateAccountRequest, opts ...grpc.CallOption) (*CreateAccountResponse, error) {
-	out := new(CreateAccountResponse)
-	err := c.cc.Invoke(ctx, OrganizationService_CreateAccountInOrganization_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *organizationServiceClient) InviteAccountToOrganization(ctx context.Context, in *InviteAccountRequest, opts ...grpc.CallOption) (*Account, error) {
-	out := new(Account)
+func (c *organizationServiceClient) InviteAccountToOrganization(ctx context.Context, in *InviteAccountRequest, opts ...grpc.CallOption) (*InviteAccountResponse, error) {
+	out := new(InviteAccountResponse)
 	err := c.cc.Invoke(ctx, OrganizationService_InviteAccountToOrganization_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -98,8 +87,7 @@ type OrganizationServiceServer interface {
 	GetOrganization(context.Context, *emptypb.Empty) (*Organization, error)
 	GetAccountsInOrganization(context.Context, *emptypb.Empty) (*ListOfAccounts, error)
 	GetAccountInOrganizationBasedOnId(context.Context, *AccountId) (*Account, error)
-	CreateAccountInOrganization(context.Context, *CreateAccountRequest) (*CreateAccountResponse, error)
-	InviteAccountToOrganization(context.Context, *InviteAccountRequest) (*Account, error)
+	InviteAccountToOrganization(context.Context, *InviteAccountRequest) (*InviteAccountResponse, error)
 	mustEmbedUnimplementedOrganizationServiceServer()
 }
 
@@ -116,10 +104,7 @@ func (UnimplementedOrganizationServiceServer) GetAccountsInOrganization(context.
 func (UnimplementedOrganizationServiceServer) GetAccountInOrganizationBasedOnId(context.Context, *AccountId) (*Account, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAccountInOrganizationBasedOnId not implemented")
 }
-func (UnimplementedOrganizationServiceServer) CreateAccountInOrganization(context.Context, *CreateAccountRequest) (*CreateAccountResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CreateAccountInOrganization not implemented")
-}
-func (UnimplementedOrganizationServiceServer) InviteAccountToOrganization(context.Context, *InviteAccountRequest) (*Account, error) {
+func (UnimplementedOrganizationServiceServer) InviteAccountToOrganization(context.Context, *InviteAccountRequest) (*InviteAccountResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method InviteAccountToOrganization not implemented")
 }
 func (UnimplementedOrganizationServiceServer) mustEmbedUnimplementedOrganizationServiceServer() {}
@@ -189,24 +174,6 @@ func _OrganizationService_GetAccountInOrganizationBasedOnId_Handler(srv interfac
 	return interceptor(ctx, in, info, handler)
 }
 
-func _OrganizationService_CreateAccountInOrganization_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CreateAccountRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(OrganizationServiceServer).CreateAccountInOrganization(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: OrganizationService_CreateAccountInOrganization_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(OrganizationServiceServer).CreateAccountInOrganization(ctx, req.(*CreateAccountRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _OrganizationService_InviteAccountToOrganization_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(InviteAccountRequest)
 	if err := dec(in); err != nil {
@@ -245,14 +212,10 @@ var OrganizationService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _OrganizationService_GetAccountInOrganizationBasedOnId_Handler,
 		},
 		{
-			MethodName: "CreateAccountInOrganization",
-			Handler:    _OrganizationService_CreateAccountInOrganization_Handler,
-		},
-		{
 			MethodName: "InviteAccountToOrganization",
 			Handler:    _OrganizationService_InviteAccountToOrganization_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "backend/protos/organization.proto",
+	Metadata: "protos/organization.proto",
 }
